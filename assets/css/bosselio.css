@@ -1,0 +1,560 @@
+/* ===========================================================================
+   BOSSELIO — the experience
+   Structure is hairlines. Hierarchy is scale and space. Nothing bounces.
+   ========================================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  overflow-x: clip;   /* the page body never scrolls sideways */
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--type-primary);
+  font-family: var(--face-text);
+  font-size: var(--text-l);
+  font-weight: 400;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img, svg { max-width: 100%; display: block; }
+[hidden] { display: none !important; }
+
+/* --- 4% monochrome grain. Everything looks shot on medium format. -------- */
+.grain {
+  position: fixed; inset: 0; z-index: 90;
+  pointer-events: none; opacity: 0.045; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --- The spine: a margin rule running the full document, as in a ledger -- */
+.spine {
+  position: fixed; top: 0; bottom: 0; left: var(--spine);
+  width: var(--hairline); background: var(--rule);
+  z-index: 2; pointer-events: none;
+  transform-origin: top; transform: scaleY(0);
+  transition: transform 1600ms var(--ease) 900ms;
+}
+.is-ready .spine { transform: scaleY(1); }
+@media (max-width: 760px) { .spine { display: none; } }
+
+/* --- Shared layout ------------------------------------------------------ */
+.shell { padding-inline: var(--margin-outer); }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, var(--col));
+  column-gap: clamp(1rem, 2vw, 2rem);
+}
+/* Items default to min-width:auto and will otherwise widen their own track */
+.grid > * { min-width: 0; }
+/* Asymmetry as default. The empty half stays empty. */
+.col-left  { grid-column: 2 / span 6; }   /* cols 2–7  */
+.col-right { grid-column: 9 / span 4; }   /* cols 9–12, col 8 left as air */
+.col-inset { grid-column: 2 / span 9; }   /* cols 2–10 */
+@media (max-width: 900px) {
+  .col-left, .col-right, .col-inset { grid-column: 1 / -1; }
+}
+
+section { position: relative; padding-block: var(--chapter-break); }
+.measure { max-width: var(--measure); }
+.measure-tight { max-width: var(--measure-tight); }
+
+/* --- Type components --------------------------------------------------- */
+.display {
+  font-family: var(--face-display);
+  font-weight: 300;
+  line-height: 0.98;
+  letter-spacing: var(--track-display);
+  margin: 0;
+  text-wrap: balance;
+}
+.display--xl { font-size: var(--display-xl); }
+.display--l  { font-size: var(--display-l); }
+.display--m  { font-size: var(--display-m); line-height: 1.12; }
+
+.label {
+  font-size: var(--label);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--type-muted);
+  margin: 0;
+}
+.lede { font-size: var(--text-l); color: var(--type-muted); }
+.fine { font-size: var(--text-s); color: var(--type-faint); line-height: 1.6; }
+.num  { font-variant-numeric: tabular-nums; }
+.cost { color: var(--caution); }          /* cost, risk, penalty — only */
+
+.rule {
+  height: var(--hairline); border: 0; margin: 0;
+  background: var(--rule);
+  transform-origin: left; transform: scaleX(0);
+  transition: transform var(--d-slow) var(--ease);
+}
+.is-seen .rule, .rule.is-seen { transform: scaleX(1); }
+.rule--brass { background: var(--rule-brass); }
+
+/* Links underline on a brass rule that draws from the left */
+a { color: inherit; text-decoration: none; }
+.link {
+  position: relative; display: inline-block;
+  color: var(--type-primary);
+}
+.link::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -3px;
+  height: var(--hairline); background: var(--accent);
+  transform-origin: left; transform: scaleX(0);
+  transition: transform var(--d-feedback) var(--ease);
+}
+.link:hover::after, .link:focus-visible::after { transform: scaleX(1); }
+
+/* Focus as a design asset, not a suppressed default */
+:focus-visible {
+  outline: 2px solid var(--accent-lit);
+  outline-offset: 3px;
+}
+
+/* --- Reveal: rise + fade, 18px maximum --------------------------------- */
+.reveal {
+  opacity: 0; transform: translateY(var(--rise));
+  transition: opacity var(--d-reveal) var(--ease), transform var(--d-reveal) var(--ease);
+}
+.reveal.is-seen { opacity: 1; transform: none; }
+.reveal[data-delay="1"] { transition-delay: 120ms; }
+.reveal[data-delay="2"] { transition-delay: 240ms; }
+.reveal[data-delay="3"] { transition-delay: 360ms; }
+.reveal[data-delay="4"] { transition-delay: 480ms; }
+
+/* ===========================================================================
+   I. THE APERTURE — the opening. Once per session, 1.6s, skippable.
+   ========================================================================= */
+.overture {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center;
+  background: var(--obsidian);
+  transition: opacity var(--d-slow) var(--ease), visibility var(--d-slow);
+}
+.overture.is-done { opacity: 0; visibility: hidden; }
+.overture__cross { position: absolute; inset: 0; pointer-events: none; }
+.overture__cross i {
+  position: absolute; background: var(--rule-strong);
+}
+.overture__cross i:nth-child(1) {
+  left: var(--spine); top: 0; bottom: 0; width: var(--hairline);
+  transform-origin: top; transform: scaleY(0);
+  animation: draw-y 1100ms var(--ease) forwards;
+}
+.overture__cross i:nth-child(2) {
+  left: 0; right: 0; top: 58%; height: var(--hairline);
+  transform-origin: left; transform: scaleX(0);
+  animation: draw-x 1100ms var(--ease) 160ms forwards;
+}
+@keyframes draw-y { to { transform: scaleY(1); } }
+@keyframes draw-x { to { transform: scaleX(1); } }
+
+.overture__skip {
+  position: absolute; bottom: var(--s-4); right: var(--margin-outer);
+  background: none; border: 0; padding: var(--s-1) 0;
+  font-family: var(--face-text); font-size: var(--label);
+  text-transform: uppercase; letter-spacing: var(--track-label);
+  color: var(--type-faint); cursor: pointer;
+}
+.overture__skip:hover { color: var(--type-muted); }
+
+/* The wordmark's tracking settles inward — the brand in one gesture */
+.wordmark {
+  font-family: var(--face-display); font-weight: 300;
+  text-transform: uppercase; font-size: var(--display-l);
+  letter-spacing: var(--track-wordmark);
+  margin: 0; color: var(--alabaster);
+  /* trailing tracking leaves a phantom gap; pull it back optically */
+  margin-inline-end: calc(var(--track-wordmark) * -1);
+}
+.overture .wordmark {
+  letter-spacing: 0.9em; opacity: 0;
+  animation: settle 1100ms var(--ease) 300ms forwards;
+}
+@keyframes settle {
+  from { letter-spacing: 0.9em; opacity: 0; }
+  to   { letter-spacing: var(--track-wordmark); opacity: 1; }
+}
+
+/* The mark: hairline square, rotated, lower-right quadrant left open.
+   Drawn at 1px at every size — it never fills and never gains a gradient.
+   Its resting state is visible; only the overture draws it on. */
+.aperture { width: 1em; height: 1em; overflow: visible; }
+.aperture path {
+  fill: none; stroke: var(--accent); stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.overture .aperture path {
+  stroke-dasharray: 100; stroke-dashoffset: 100;
+  animation: stroke 700ms var(--ease) forwards;
+}
+.overture .aperture path:nth-child(2) { animation-delay: 180ms; }
+.overture .aperture path:nth-child(3) { animation-delay: 360ms; }
+@keyframes stroke { to { stroke-dashoffset: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .overture { display: none; }
+  .overture .aperture path { stroke-dashoffset: 0; }
+}
+
+/* ===========================================================================
+   Masthead
+   ========================================================================= */
+.masthead {
+  position: relative; z-index: 10;
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--s-4); padding-block: var(--s-4);
+}
+.masthead__lockup { display: flex; align-items: center; gap: var(--s-2); }
+.masthead .aperture { color: var(--accent); font-size: 1.4rem; flex: none; }
+.masthead .wordmark { font-size: 1.3rem; }
+.masthead__descriptor { margin-top: 0.35rem; }
+
+.masthead__nav { display: flex; gap: var(--s-3); align-items: baseline; }
+.masthead__nav a {
+  font-size: var(--label); text-transform: uppercase;
+  letter-spacing: var(--track-label); color: var(--type-muted);
+}
+.masthead__nav a:hover { color: var(--type-primary); }
+@media (max-width: 760px) { .masthead__nav { display: none; } }
+
+/* Bilingual lockup — Arabic above, never smaller, joined by a hairline */
+.bilingual { display: inline-flex; flex-direction: column; gap: 0.3rem; }
+.bilingual__ar {
+  font-family: var(--face-arabic); font-weight: 300;
+  font-size: 1.06em; line-height: 1.4; color: var(--type-primary);
+  margin: 0;
+}
+.bilingual__rule { width: 2.5rem; height: var(--hairline); background: var(--rule-strong); }
+
+/* ===========================================================================
+   Hero — one idea per screen
+   ========================================================================= */
+.hero {
+  padding-block: clamp(4rem, 12vh, 10rem) var(--chapter-break);
+  overflow: clip;   /* contains the ambient glow */
+}
+/* A single ambient warm glow. Noticed only if looked for. */
+.hero__glow {
+  position: absolute; z-index: 0; pointer-events: none;
+  top: -20%; right: -10%; width: 70vw; aspect-ratio: 1;
+  background: radial-gradient(circle at 50% 50%,
+    color-mix(in srgb, var(--brass) 100%, transparent) 0%,
+    transparent 62%);
+  opacity: 0.06; filter: blur(30px);
+  animation: drift 60s ease-in-out infinite alternate;
+}
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-4%, 3%, 0) scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) { .hero__glow { animation: none; } }
+
+.hero__inner { position: relative; z-index: 1; }
+.hero .display--xl { margin-block: var(--s-3) var(--s-4); }
+.hero__em { color: var(--accent); font-style: italic; }
+
+.hero__proof {
+  display: flex; flex-wrap: wrap; gap: var(--s-4) clamp(1.5rem, 3vw, 2.75rem);
+  margin-top: var(--s-6);
+}
+.hero__proof div { display: grid; gap: 0.35rem; }
+.hero__proof b {
+  font-family: var(--face-display); font-weight: 300;
+  font-size: var(--display-m); line-height: 1;
+  font-variant-numeric: tabular-nums; color: var(--type-primary);
+}
+
+/* Drawn composition — layered hairline geometry, no stock photography */
+.plate { position: relative; aspect-ratio: 3 / 4; }
+.plate svg { width: 100%; height: 100%; }
+.plate svg [data-draw] {
+  stroke: var(--rule-strong); fill: none; stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1400; stroke-dashoffset: 1400;
+  transition: stroke-dashoffset 2400ms var(--ease);
+}
+.plate.is-seen svg [data-draw] { stroke-dashoffset: 0; }
+.plate svg [data-draw="brass"] { stroke: var(--rule-brass); }
+.plate__wash {
+  position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(165deg,
+    color-mix(in srgb, var(--oud) 90%, transparent),
+    color-mix(in srgb, var(--obsidian) 100%, transparent));
+}
+
+/* ===========================================================================
+   IV. CHAPTERS — Roman numerals as compositional anchors
+   ========================================================================= */
+.chapter { display: grid; gap: var(--s-3); padding-block: var(--s-6); }
+.chapter__head {
+  display: flex; align-items: baseline; gap: var(--s-3);
+}
+.chapter__no {
+  font-family: var(--face-display); font-weight: 300;
+  font-size: var(--display-m); line-height: 1;
+  color: var(--accent); flex: none; min-width: 3ch;
+}
+.chapter__dur {
+  margin-left: auto; text-align: right; white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .chapter__head { flex-wrap: wrap; }
+  .chapter__dur { margin-left: 0; width: 100%; text-align: left; }
+}
+.chapter__body { padding-left: calc(3ch + var(--s-3)); }
+@media (max-width: 640px) { .chapter__body { padding-left: 0; } }
+
+/* ===========================================================================
+   II. THE LEDGER — handed a single sheet across a desk
+   ========================================================================= */
+.shell > .on-paper {
+  margin-inline: calc(var(--margin-outer) * -1);
+  padding-inline: var(--margin-outer);
+}
+
+.ledger__sheet { padding-block: var(--chapter-break); }
+
+.ledger__table { width: 100%; border-collapse: collapse; }
+.ledger__table caption {
+  text-align: left; padding-bottom: var(--s-3);
+  color: var(--type-muted); font-size: var(--text-s);
+}
+.ledger__table th, .ledger__table td {
+  text-align: left; padding: var(--s-3) var(--s-2);
+  border-top: var(--hairline) solid var(--rule);
+  vertical-align: baseline;
+}
+.ledger__table thead th {
+  font-size: var(--label); font-weight: 500; text-transform: uppercase;
+  letter-spacing: var(--track-label); color: var(--type-faint);
+  border-top: 0; padding-bottom: var(--s-1);
+}
+.ledger__table td.n, .ledger__table th.n {
+  text-align: right; font-variant-numeric: tabular-nums;
+}
+.ledger__bank {
+  font-size: var(--text-s); font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.ledger__rate {
+  font-family: var(--face-display); font-weight: 300;
+  font-size: 1.65rem; line-height: 1; font-variant-numeric: tabular-nums;
+}
+/* Terms read as an opinion — one line of rationale in the advisor's voice */
+.ledger__why {
+  display: block; max-width: 42ch; margin-top: 0.4rem;
+  font-size: var(--text-s); line-height: 1.55; color: var(--type-muted);
+}
+.ledger__table tr.is-counsel { position: relative; }
+.ledger__table tr.is-counsel td { border-top-color: var(--rule-brass); }
+.ledger__table tr.is-counsel .ledger__rate { color: var(--accent-lit); }
+.ledger__mark {
+  font-size: var(--label); text-transform: uppercase;
+  letter-spacing: var(--track-label); color: var(--accent-lit);
+  display: block; margin-bottom: 0.3rem;
+}
+.ledger__scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.ledger__scroll .ledger__table { min-width: 34rem; }
+
+/* A column of prose cannot live in a table at phone width — the rows grow to
+   the height of the note and the numerals drift off-screen. Below 760px the
+   ledger reflows into one stacked sheet per lender: the rate stays the largest
+   thing on the block, the terms sit as labelled pairs, the note reads beneath.
+   Each cell carries its own label, so the hidden header row is not needed. */
+@media (max-width: 760px) {
+  .ledger__scroll { overflow-x: visible; }
+  .ledger__scroll .ledger__table { min-width: 0; }
+  .ledger__table, .ledger__table tbody { display: block; }
+  .ledger__table thead { display: none; }
+
+  .ledger__table tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-2) var(--s-3);
+    padding-block: var(--s-4);
+    border-top: var(--hairline) solid var(--rule);
+  }
+  .ledger__table tr.is-counsel { border-top-color: var(--rule-brass); }
+
+  .ledger__table th, .ledger__table td {
+    display: block; border: 0; padding: 0;
+  }
+  .ledger__table td.n, .ledger__table th.n { text-align: left; }
+  .ledger__table th[scope="row"],
+  .ledger__table td[data-label="Fixed"],
+  .ledger__table td.ledger__note { grid-column: 1 / -1; }
+
+  .ledger__table td[data-label]::before {
+    content: attr(data-label);
+    display: block; margin-bottom: 0.2rem;
+    font-size: var(--label); font-weight: 500;
+    text-transform: uppercase; letter-spacing: var(--track-label);
+    color: var(--type-faint);
+  }
+  .ledger__table .ledger__rate { font-size: 2.1rem; }
+  .ledger__table .ledger__why { max-width: none; }
+}
+
+/* ===========================================================================
+   III. THE POSITION — a calculator that argues back
+   ========================================================================= */
+.position__figure {
+  font-family: var(--face-display); font-weight: 300;
+  font-size: clamp(2.1rem, 4vw, 3.4rem); line-height: 1.05;
+  font-variant-numeric: tabular-nums; margin: 0;
+}
+.position__figure small {
+  font-family: var(--face-text); font-size: var(--label);
+  text-transform: uppercase; letter-spacing: var(--track-label);
+  color: var(--type-muted); display: block; margin-bottom: var(--s-2);
+}
+/* The constraint that binds, named in plain language */
+.position__bind {
+  margin-top: var(--s-3); padding-top: var(--s-3);
+  border-top: var(--hairline) solid var(--rule-brass);
+  max-width: 44ch; color: var(--type-muted); font-size: var(--text-m);
+}
+.position__bind b { color: var(--type-primary); font-weight: 500; }
+
+.field { display: grid; gap: var(--s-1); padding-block: var(--s-3) var(--s-4); }
+.field + .field { border-top: var(--hairline) solid var(--rule); }
+.field__row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-2); }
+.field__val { font-variant-numeric: tabular-nums; font-size: var(--text-m); }
+
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 28px; background: none; cursor: grab; margin: 0;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: var(--hairline); background: var(--rule-strong);
+}
+input[type="range"]::-moz-range-track {
+  height: var(--hairline); background: var(--rule-strong);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: var(--hairline); height: 22px; margin-top: -11px;
+  background: var(--accent-lit); border: 0; border-radius: 0;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--brass) 12%, transparent);
+  transition: box-shadow var(--d-feedback) var(--ease);
+}
+input[type="range"]::-moz-range-thumb {
+  width: var(--hairline); height: 22px;
+  background: var(--accent-lit); border: 0; border-radius: 0;
+}
+input[type="range"]:hover::-webkit-slider-thumb,
+input[type="range"]:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 10px color-mix(in srgb, var(--brass) 18%, transparent);
+}
+
+/* Segmented control — hairlines, no colour flood */
+.segments { display: flex; flex-wrap: wrap; gap: 0; margin-top: var(--s-1); }
+.segments button {
+  flex: 1 1 auto; min-height: 44px; padding: var(--s-1) var(--s-2);
+  background: none; cursor: pointer;
+  border: var(--hairline) solid var(--rule);
+  color: var(--type-muted);
+  font-family: var(--face-text); font-size: var(--label);
+  text-transform: uppercase; letter-spacing: var(--track-label);
+  transition: color var(--d-feedback) var(--ease),
+              border-color var(--d-feedback) var(--ease);
+}
+.segments button + button { border-inline-start: 0; }
+.segments button:hover { color: var(--type-primary); }
+.segments button[aria-pressed="true"] {
+  color: var(--accent-lit); border-color: var(--rule-brass);
+}
+
+/* ===========================================================================
+   V. THE COUNSEL CARD — three fields, no lead form
+   ========================================================================= */
+.counsel { padding-block: var(--chapter-break); }
+.counsel__card {
+  background: var(--ground-raised);
+  padding: clamp(1.75rem, 4vw, 3.5rem);
+  display: grid; gap: var(--s-3);
+}
+.counsel__field { display: grid; gap: var(--s-1); }
+.counsel__field label {
+  font-size: var(--label); text-transform: uppercase;
+  letter-spacing: var(--track-label); color: var(--type-muted);
+}
+.counsel__field input, .counsel__field textarea, .counsel__field select {
+  width: 100%; min-height: 44px; padding: var(--s-1) 0;
+  background: none; color: var(--type-primary);
+  border: 0; border-bottom: var(--hairline) solid var(--rule-strong);
+  border-radius: 0;
+  font-family: var(--face-text); font-size: var(--text-m); line-height: 1.6;
+  transition: border-color var(--d-feedback) var(--ease);
+}
+.counsel__field textarea { resize: vertical; min-height: 5.5rem; }
+.counsel__field :is(input, textarea, select):focus {
+  outline: none; border-bottom-color: var(--accent);
+}
+.counsel__field :is(input, textarea)::placeholder { color: var(--type-faint); }
+
+.btn {
+  justify-self: start;
+  min-height: 48px; padding: 0 var(--s-4);
+  background: none; cursor: pointer;
+  border: var(--hairline) solid var(--rule-brass);
+  color: var(--accent-lit);
+  font-family: var(--face-text); font-size: var(--label);
+  text-transform: uppercase; letter-spacing: var(--track-label);
+  transition: color var(--d-feedback) var(--ease),
+              border-color var(--d-feedback) var(--ease);
+}
+.btn:hover { color: var(--type-primary); border-color: var(--type-primary); }
+.btn[disabled] { opacity: 0.5; cursor: default; }
+
+/* Submission draws a hairline seal — never a spinner */
+.seal { display: grid; gap: var(--s-2); place-items: start; }
+.seal svg { width: 3rem; height: 3rem; overflow: visible; }
+.seal svg * {
+  fill: none; stroke: var(--accent); stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 200; stroke-dashoffset: 200;
+  animation: stroke var(--d-slow) var(--ease) forwards;
+}
+.seal svg *:nth-child(2) { animation-delay: 200ms; }
+
+/* ===========================================================================
+   Colophon
+   ========================================================================= */
+.colophon { padding-block: var(--s-6) var(--s-5); }
+.colophon__grid {
+  display: flex; flex-wrap: wrap; gap: var(--s-5) var(--s-6);
+  justify-content: space-between; align-items: flex-start;
+  padding-top: var(--s-4);
+}
+.colophon__col { display: grid; gap: var(--s-1); align-content: start; }
+.colophon__col a { font-size: var(--text-m); color: var(--type-muted); }
+.colophon__col a:hover { color: var(--type-primary); }
+.colophon__legal { margin-top: var(--s-6); max-width: 70ch; }
+
+/* --- RTL: the lockup mirrors wholesale, not partially ------------------- */
+[dir="rtl"] .spine { left: auto; right: var(--spine); }
+[dir="rtl"] .hero__glow { right: auto; left: -10%; }
+[dir="rtl"] .chapter__body { padding-left: 0; padding-right: calc(3ch + var(--s-3)); }
+[dir="rtl"] .link::after { transform-origin: right; }
+[dir="rtl"] .rule { transform-origin: right; }
+
+@media print {
+  .grain, .spine, .overture, .hero__glow { display: none; }
+  body { background: #fff; color: #000; }
+}

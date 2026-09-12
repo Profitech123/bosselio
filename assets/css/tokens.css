@@ -1,0 +1,96 @@
+/* ===========================================================================
+   BOSSELIO — design tokens
+   The single source of truth. No hard-coded colour, size, or easing anywhere
+   else in the codebase. See BRAND.md §3, §4, §6, §7.
+   ========================================================================= */
+
+:root {
+  /* --- Colour: Desert Nocturne ------------------------------------------ */
+  --obsidian:    #0B0E0D;
+  --ink:         #141917;
+  --oud:         #1C2621;
+  --alabaster:   #F4F1EA;
+  --sand:        #D9D2C4;
+  --brass:       #B08D57;
+  --brass-lit:   #D4B483;
+  --terracotta:  #9C5B42;   /* on paper */
+  --terracotta-lit: #C57B5C; /* on the dark ground */
+
+  /* Semantic assignments (dark ground is the default state) */
+  --ground:        var(--obsidian);
+  --ground-raised: var(--ink);
+  --type-primary:  var(--alabaster);
+  --type-muted:    color-mix(in srgb, var(--sand) 62%, transparent);
+  --type-faint:    color-mix(in srgb, var(--sand) 58%, transparent);
+  --accent:        var(--brass);
+  --accent-lit:    var(--brass-lit);
+  --caution:       var(--terracotta-lit);
+
+  /* Hairlines are the structural device — never borders, never shadows */
+  --rule:        color-mix(in srgb, var(--sand) 16%, transparent);
+  --rule-strong: color-mix(in srgb, var(--sand) 30%, transparent);
+  --rule-brass:  color-mix(in srgb, var(--brass) 55%, transparent);
+  --hairline: 1px;
+
+  /* --- Type ------------------------------------------------------------- */
+  --face-display: "Cormorant Garamond", "Times New Roman", serif;
+  --face-text:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --face-arabic:  "Noto Kufi Arabic", var(--face-text);
+
+  --display-xl: clamp(2.4rem, 5.2vw, 4.5rem);
+  --display-l:  clamp(1.85rem, 3.4vw, 2.9rem);
+  --display-m:  clamp(1.45rem, 2.2vw, 1.95rem);
+  --text-l:     clamp(1.0625rem, 1.15vw, 1.1875rem);
+  --text-m:     0.9375rem;
+  --text-s:     0.8125rem;
+  --label:      0.6875rem;
+
+  --measure: 66ch;          /* editorial line length cap — BRAND.md §4 */
+  --measure-tight: 48ch;
+
+  --track-wordmark: 0.38em;
+  --track-label:    0.2em;
+  --track-display: -0.02em;
+
+  /* --- Space: 8px base -------------------------------------------------- */
+  --s-1: 0.5rem;   --s-2: 1rem;    --s-3: 1.5rem;   --s-4: 2rem;
+  --s-5: 3rem;     --s-6: 4rem;    --s-7: 6rem;     --s-8: 8rem;
+  --chapter-break: clamp(6.5rem, 14vh, 13.75rem);
+
+  --margin-outer: clamp(1.25rem, 6.5vw, 6rem);
+  --col: minmax(0, 1fr);
+  --spine: calc(var(--margin-outer) + 2.5vw);  /* the ledger margin rule */
+
+  /* --- Motion: nothing in this brand bounces ---------------------------- */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --d-feedback: 240ms;
+  --d-reveal:   900ms;
+  --d-slow:     1200ms;
+  --rise: 18px;    /* maximum reveal travel */
+}
+
+/* Light passages — the Ledger and the Counsel Card invert to paper.
+   The inversion IS the emphasis, so no highlight colour is ever needed. */
+.on-paper {
+  /* `color` is inherited as an already-resolved value, so redefining the
+     tokens alone leaves descendants painted in the dark-ground colour.
+     The paper passage must claim both ground and colour itself. */
+  background: var(--ground);
+  color: var(--type-primary);
+
+  --ground:        var(--alabaster);
+  --ground-raised: #FBF9F5;
+  --type-primary:  #16191A;
+  --type-muted:    color-mix(in srgb, #16191A 72%, transparent);
+  --type-faint:    color-mix(in srgb, #16191A 64%, transparent);
+  --rule:          color-mix(in srgb, #16191A 14%, transparent);
+  --rule-strong:   color-mix(in srgb, #16191A 26%, transparent);
+  --accent:        #8A6A3C;
+  --accent-lit:    #6F5430;
+  --rule-brass:    color-mix(in srgb, #8A6A3C 60%, transparent);
+  --caution:       var(--terracotta);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --d-feedback: 1ms; --d-reveal: 1ms; --d-slow: 1ms; --rise: 0px; }
+}
