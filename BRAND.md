@@ -76,11 +76,12 @@ The palette is drawn from UAE architectural materials at the two hours when the 
 | Display | **Cormorant Garamond** 300 | `clamp(2.6rem, 7vw, 6.5rem)`, line-height 0.98, tracking −0.02em at large sizes. High stroke contrast does the work of ornament. |
 | Editorial body | **Inter** 400 | 17–19px, line-height 1.75, measure capped at **66ch**. Never full-bleed text. |
 | Labels / eyebrows | **Inter** 500 | 11–12px, uppercase, tracking +0.2em, `--sand` at 60%. |
-| Numerals | **Inter** 400, `font-variant-numeric: tabular-nums` | Rates, LTVs, tenors. Tabular so figures align down a column like a ledger. |
+| Numerals | `font-variant-numeric: lining-nums tabular-nums` | Rates, LTVs, tenors. Tabular so figures align down a column like a ledger — and **lining**, because Cormorant Garamond defaults to oldstyle figures that drop below the baseline. Oldstyle reads literary; a ledger must read financial. |
 | Arabic | **Noto Kufi Arabic** 300 | Paired at 1.06× the Latin size for optical parity. |
 
 ### Rules
-- **Two faces. Ever.** A third face is a failure of nerve.
+- **Two faces. Ever.** A third face is a failure of nerve. (Arabic is the same voice in another script, not a third face.)
+- All three are **self-hosted** and OFL-licensed. The identity does not depend on a CDN being reachable, and no visitor's arrival is announced to a third party.
 - Hierarchy comes from *scale and space*, never from weight. We own exactly one weight of the serif.
 - Chapter numbers set as Roman numerals — `I`, `II`, `III` — in brass, at display scale, as compositional anchors rather than navigation.
 - Rates are never larger than the sentence explaining them. This is the typographic expression of the whole positioning.

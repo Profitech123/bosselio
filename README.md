@@ -19,10 +19,18 @@ python3 -m http.server 8000
 
 ```
 index.html              one page, semantic, works without JavaScript
+assets/css/fonts.css    @font-face layer, subsetted by unicode-range
 assets/css/tokens.css   the single source of truth — colour, type, space, motion
 assets/css/bosselio.css composition and components
 assets/js/bosselio.js   the overture, reveals, the Position, the seal
+assets/fonts/           the three typefaces, self-hosted, with their licences
 ```
+
+Typefaces are **self-hosted** (Cormorant Garamond, Inter, Noto Kufi Arabic —
+all SIL Open Font License 1.1, licences included). No CDN, so the identity
+cannot be broken by a third party being unreachable and no visitor's arrival is
+announced to one. Subsets carry their `unicode-range`: a reader who never
+touches Arabic never downloads it, and a typical visit pulls ~130 KB of font.
 
 **Change colour, scale, rhythm or easing in `tokens.css` only.** No hard-coded
 colour or duration lives anywhere else, which is what keeps the system from
@@ -42,9 +50,10 @@ BRAND.md §5.
 
 ## Verified
 
-No horizontal overflow at 360–1600px · 33/33 text styles pass WCAG AA ·
-complete with scripting disabled · honours `prefers-reduced-motion` · RTL
-mirrors wholesale.
+No horizontal overflow at 360–1600px · 33/33 text styles pass WCAG AA · all
+five faces load and take effect, with figures lining and tabular · complete
+with scripting disabled · honours `prefers-reduced-motion` · RTL mirrors
+wholesale.
 
 Not yet done, and listed in ROADMAP.md: the enquiry form has no backend, ledger
 rates are illustrative and hard-coded, and Arabic is a scaffold rather than a

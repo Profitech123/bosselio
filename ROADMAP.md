@@ -22,15 +22,14 @@ principal before anyone commissions photography or writes a backend.
 ## Phase 0 — Reference implementation *(done)*
 
 - Tokens as the single source of truth (`assets/css/tokens.css`)
+- Typefaces self-hosted and subsetted; no third-party font dependency
 - All five signature moments built: Aperture, Ledger, Position, Chapters, Counsel Card
 - Verified: no horizontal overflow at 360–1600px; 33/33 text styles pass WCAG AA;
   works with scripting disabled; honours `prefers-reduced-motion`; RTL mirrors
 
 **Known limits, stated plainly:** the enquiry form has no backend; ledger rates
 are hard-coded and illustrative; Arabic is a lockup and a scaffold, not a
-translation; webfont rendering was not verifiable in the build sandbox (Google
-Fonts is blocked there) so the pairing should be eyeballed once on a real
-network.
+translation.
 
 ---
 
@@ -99,7 +98,7 @@ Scope after Phase 1 proves enquiry volume.
 | Restraint is mistaken for emptiness by a stakeholder | High | The hero's three proof points and the Ledger carry the substance; resist adding badges — that is the anti-brief |
 | Discretion converts more slowly than a lead-gen template | Medium | Measure enquiry *quality* and file value, never raw volume; the premise is fewer, larger files |
 | Slow motion reads as slow performance | Medium | Reveals are opacity/transform only; nothing blocks paint; overture is skippable and once-per-session |
-| Webfonts fail or are blocked in-region | Medium | Fallback stack is declared; self-host the three faces at Phase 1 to remove the third-party dependency |
+| ~~Webfonts fail or are blocked in-region~~ | Closed | Resolved: all three faces are self-hosted and subsetted, with a fallback stack still declared |
 | Arabic added late and treated as a translation layer | Medium | Phase 2 commissioned at Phase 1 start, by a native writer |
 | Two faces become five as pages are added | Low but corrosive | The anti-brief is the review gate for every new page |
 
@@ -116,7 +115,8 @@ Run before any deploy.
 - [ ] Brass covers under 4% of any viewport; no two accents adjacent
 
 **Type**
-- [ ] Exactly two Latin faces load; one serif weight only
+- [ ] Exactly two Latin faces load; one serif weight only; no request leaves for a font CDN
+- [ ] Every figure renders lining and tabular — Cormorant defaults to oldstyle, which silently returns whenever `font-variant-numeric` is dropped
 - [ ] No rate set larger than the sentence explaining it
 - [ ] Numerals tabular and column-aligned in the Ledger
 - [ ] Measure stays at or under 66ch
