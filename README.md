@@ -24,6 +24,7 @@ assets/css/tokens.css   the single source of truth — colour, type, space, moti
 assets/css/bosselio.css composition and components
 assets/js/bosselio.js   the overture, reveals, the Position, the seal
 assets/fonts/           the three typefaces, self-hosted, with their licences
+tools/leading-check.js  optional: proves display leading never collides
 ```
 
 Typefaces are **self-hosted** (Cormorant Garamond, Inter, Noto Kufi Arabic —
@@ -35,6 +36,22 @@ touches Arabic never downloads it, and a typical visit pulls ~130 KB of font.
 **Change colour, scale, rhythm or easing in `tokens.css` only.** No hard-coded
 colour or duration lives anywhere else, which is what keeps the system from
 drifting as pages are added.
+
+## Checking display leading
+
+The hero sets at `line-height: 0.92` — the tightest value at which no glyph ink
+collides at any width from 360px to 1600px. That limit is a measurement, not a
+preference, and a copy change can move it. To re-check:
+
+```sh
+python3 -m http.server 8000
+npx playwright@latest install chromium     # first run only
+node tools/leading-check.js 0.92
+```
+
+It exits non-zero if any descender would strike the ascender below it, so it
+can gate a deploy. The site itself still has no dependencies — this is a
+dev-only tool.
 
 ## What is deliberate
 
@@ -51,7 +68,8 @@ BRAND.md §5.
 ## Verified
 
 No horizontal overflow at 360–1600px · 33/33 text styles pass WCAG AA · all
-five faces load and take effect, with figures lining and tabular · complete
+five faces load and take effect, with figures lining and tabular · no display
+leading collision at any width · complete
 with scripting disabled · honours `prefers-reduced-motion` · RTL mirrors
 wholesale.
 

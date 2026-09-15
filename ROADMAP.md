@@ -120,6 +120,7 @@ Run before any deploy.
 - [ ] No rate set larger than the sentence explaining it
 - [ ] Numerals tabular and column-aligned in the Ledger
 - [ ] Measure stays at or under 66ch
+- [ ] `node tools/leading-check.js 0.92` passes — display leading must not collide at any width, and a copy change can move the binding glyph pair
 
 **Accessibility**
 - [ ] Every text style meets WCAG AA at its rendered size — re-run the contrast pass after any token change, compositing alpha over the real background

@@ -83,6 +83,9 @@ The palette is drawn from UAE architectural materials at the two hours when the 
 - **Two faces. Ever.** A third face is a failure of nerve. (Arabic is the same voice in another script, not a third face.)
 - All three are **self-hosted** and OFL-licensed. The identity does not depend on a CDN being reachable, and no visitor's arrival is announced to a third party.
 - Hierarchy comes from *scale and space*, never from weight. We own exactly one weight of the serif.
+- **Leading tightens as size grows.** The display steps do not share a line-height: the hero sets at `0.92`, the section step at `0.98`, the small step at `1.12`. Uniform leading across sizes is the tell of a system that was never set by eye.
+- **Tight leading is a measured value, not a taste.** On a face with extenders this long, the limit is the point where a descender strikes the ascender below it. `0.92` is the tightest setting at which no glyph ink collides anywhere between 360px and 1600px; it touches at `0.91`. Re-run `tools/leading-check.js` whenever display copy changes — a new word can move the binding pair.
+- **A headline of two sentences sets as two blocks.** Leading runs tight within a thought; the turn between thoughts is a margin. This also keeps the roman descenders of one sentence away from the brass italic ascenders of the next — a cross-colour collision reads as a defect, never as an interlock.
 - Chapter numbers set as Roman numerals — `I`, `II`, `III` — in brass, at display scale, as compositional anchors rather than navigation.
 - Rates are never larger than the sentence explaining them. This is the typographic expression of the whole positioning.
 

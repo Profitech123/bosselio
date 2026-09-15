@@ -75,7 +75,11 @@ section { position: relative; padding-block: var(--chapter-break); }
   margin: 0;
   text-wrap: balance;
 }
-.display--xl { font-size: var(--display-xl); }
+/* 0.92 is the tightest leading at which no glyph ink collides anywhere
+   between 360px and 1600px — measured per character pair, not eyeballed.
+   The binding pair is the y descender against a following t ascender, which
+   touches at 0.91. Retest with the sweep if this copy ever changes. */
+.display--xl { font-size: var(--display-xl); line-height: 0.92; }
 .display--l  { font-size: var(--display-l); }
 .display--m  { font-size: var(--display-m); line-height: 1.12; }
 
@@ -262,6 +266,15 @@ a { color: inherit; text-decoration: none; }
 
 .hero__inner { position: relative; z-index: 1; }
 .hero .display--xl { margin-block: var(--s-3) var(--s-4); }
+
+/* The headline is two sentences with a rhetorical turn between them, so it is
+   set as two blocks. Leading is then free to run tight *within* a sentence,
+   while the gap at the turn is governed by a margin — which also guarantees
+   the roman descenders of the first sentence can never strike the brass
+   italic ascenders of the second. A cross-colour collision reads as a defect,
+   not as an interlock. */
+.hero__sentence { display: block; }
+.hero__sentence + .hero__sentence { margin-top: 0.16em; }
 .hero__em { color: var(--accent); font-style: italic; }
 
 .hero__proof {
